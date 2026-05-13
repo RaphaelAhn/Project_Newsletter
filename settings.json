@@ -1,0 +1,17 @@
+{
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 10000,
+  "markdown.preview.fontSize": 14,
+  "[markdown]": {
+    "editor.wordWrap": "on",
+    "editor.formatOnSave": true
+  },
+  "editor.fontSize": 13,
+  "editor.wordWrap": "on",
+  "editor.rulers": [80, 120],
+  "files.exclude": {
+    "**/.DS_Store": true,
+    "**/__pycache__": true,
+    "**/*.pyc": true
+  }
+}
