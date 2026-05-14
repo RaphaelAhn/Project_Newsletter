@@ -15,11 +15,14 @@
 Project_Newsletter/
 ├── docs/                    # 문서 및 가이드
 │   └── fact-check-guide.md  # 팩트 체크 방법론
-├── sources/                 # 뉴스 원본 수집
-│   ├── games/              # 게임 관련 뉴스
-│   ├── it/                 # IT 관련 뉴스
-│   ├── crypto/             # 코인 관련 뉴스
-│   └── soccer/             # 축구 관련 뉴스
+├── data/                    # 구조화된 데이터 보관
+│   ├── sources.json         # 뉴스 출처 및 기사 링크 데이터
+│   └── factcheck.json       # 팩트체크 기록 및 상태 관리
+├── settings/                # 간행지별 설정 파일
+│   ├── game.json            # 게임 섹션 설정
+│   ├── it.json              # IT 섹션 설정
+│   ├── crypto.json          # 코인 섹션 설정
+│   └── soccer.json          # 축구 섹션 설정
 ├── drafts/                  # 뉴스레터 초안
 ├── published/               # 발행된 뉴스레터
 ├── templates/               # 뉴스레터 템플릿
@@ -44,20 +47,26 @@ Project_Newsletter/
 
 ## 🔄 작업 흐름
 
-1. **뉴스 수집** → `sources/` 폴더에 저장
-2. **초안 작성** → `drafts/` 폴더에서 작성
-3. **팩트 체크** → `docs/fact-check-guide.md` 참고
-4. **최종 검수** → 톤과 정확성 확인
-5. **발행** → `published/` 폴더로 이동
+1. **뉴스 수집 및 템플릿 생성** → `data/sources.json`에 뉴스 기록 후 `create_issue.py`로 초안 파일 생성
+2. **1차 작성 (Codex)** → `docs/prompts.md`의 템플릿을 사용하여 Codex로 기초 원고 작성
+3. **1차 검수 및 수정 (Claude Code)** → `docs/prompts.md`의 윤문 템플릿으로 DJ 톤 앤 매너 반영
+4. **정확도 체크 (Perplexity)** → `docs/prompts.md`의 팩트체크 템플릿을 활용해 실시간 교차 검증
+5. **피드백 루프** → 4번(Perplexity) 검증 결과 내용이 부정확하다면, 피드백을 바탕으로 3번(Claude Code)으로 돌아가 재작성
+6. **발행** → 최종 검수 완료 후 `publish_edition.py` 스크립트로 `published/` 폴더로 이동
 
 ## 📝 시작하기
 
-1. `templates/newsletter-template.md`로 새 뉴스레터 생성
-2. `sources/` 폴더의 원본 뉴스 정리
-3. 각 분야별로 뉴스 3-5개 선정
-4. 라디오 DJ 톤으로 풀어서 작성
-5. 팩트 체크 진행
-6. `published/` 폴더로 이동
+1. `data/sources.json` 파일에 이번 주 다룰 뉴스 정보 저장
+2. 터미널을 열고 스크립트 실행하여 초안 생성:
+   ```bash
+   python scripts/create_issue.py --edition game --date 2026-05-14
+   ```
+3. `docs/prompts.md`를 참고하여 Codex, Claude, Perplexity를 활용해 `초안 작성 → 윤문 → 팩트체크 및 수정` 루프 진행
+4. 검증된 내용을 `data/factcheck.json`에 기록
+5. 글 완성 후 발행 스크립트 실행:
+   ```bash
+   python scripts/publish_edition.py --edition game --date 2026-05-14
+   ```
 
 ---
 
