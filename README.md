@@ -1,73 +1,77 @@
-# 📻 Project Newsletter - 주간 뉴스레터
+# Project Newsletter
 
-게임, IT, 코인, 축구에 관한 정확하고 친근한 주간 뉴스레터를 발행하는 프로젝트입니다.
+게임, IT, 코인, 축구 주제를 다루는 주간 뉴스레터 프로젝트입니다.
 
-## 🎯 프로젝트 목표
+이 저장소는 경로 의존성을 최소화해서, 다른 PC에서도 `C:\Project_Newsletter` 같은 위치에 그대로 내려받아 이어서 작업할 수 있게 구성합니다.
 
-- **정확성**: 팩트 체크된 뉴스만 전달
-- **친근함**: 라디오 DJ처럼 편한 톤으로 설명
-- **실용성**: 누구나 이해할 수 있는 쉬운 설명
-- **정기성**: 매주 일관되게 발행
+## 다른 PC에서 이어서 작업하기
 
-## 📋 프로젝트 구조
+Windows PowerShell 기준:
 
+```powershell
+cd C:\
+git clone https://github.com/RaphaelAhn/Project_Newsletter.git
+cd C:\Project_Newsletter
 ```
+
+원하는 위치가 꼭 `C:\Project_Newsletter`일 필요는 없지만, 여러 PC에서 같은 경로를 쓰고 싶다면 위 방식이 가장 단순합니다.
+
+## 현재 폴더 구조
+
+```text
 Project_Newsletter/
-├── docs/                    # 문서 및 가이드
-│   └── fact-check-guide.md  # 팩트 체크 방법론
-├── data/                    # 구조화된 데이터 보관
-│   ├── sources.json         # 뉴스 출처 및 기사 링크 데이터
-│   └── factcheck.json       # 팩트체크 기록 및 상태 관리
-├── settings/                # 간행지별 설정 파일
-│   ├── game.json            # 게임 섹션 설정
-│   ├── it.json              # IT 섹션 설정
-│   ├── crypto.json          # 코인 섹션 설정
-│   └── soccer.json          # 축구 섹션 설정
-├── drafts/                  # 뉴스레터 초안
-├── published/               # 발행된 뉴스레터
-├── templates/               # 뉴스레터 템플릿
-├── scripts/                 # 자동화 스크립트
-└── README.md               # 이 파일
+├── docs/                      # 작업 가이드 문서
+├── drafts/                    # 작성 중인 초안
+├── published/                 # 발행 완료본
+├── scripts/                   # 보조 스크립트 및 데이터
+├── templates/                 # 뉴스레터 템플릿
+├── crypto.json                # 코인 섹션 설정
+├── game.json                  # 게임 섹션 설정
+├── it.json                    # IT 섹션 설정
+├── soccer.json                # 축구 섹션 설정
+├── .env.example               # 환경 변수 예시
+├── .gitignore
+├── README.md
+├── SECURITY-CHECKLIST.md
+├── SECURITY-GUIDE.md
+└── TONEGUIDE.md
 ```
 
-## 🎙️ 톤 가이드
+## 작업 흐름
 
-- **라디오 DJ처럼** 자연스럽고 친근한 느낌
-- **실용적이면서 친절** 불필요한 건 빼되, 따뜻함 유지
-- **쉽게 설명** 초등학생도 이해할 수 있도록
-- **정확하게** 팩트는 검증 필수
+1. `scripts/sources.json`에 이번 회차 기사 후보를 정리합니다.
+2. 초안을 생성합니다.
 
-자세한 가이드는 `TONEGUIDE.md`를 참고하세요.
+```powershell
+python scripts/create_issue.py --edition game --date 2026-05-14
+```
 
-## 📅 발행 주기
+3. `docs/prompts.md`와 `TONEGUIDE.md`를 참고해 초안을 다듬습니다.
+4. 팩트체크 내용을 정리합니다.
+5. 발행본으로 이동합니다.
 
-- **발행일**: 매주 (요일 미정)
-- **섹션**: 게임, IT, 코인, 축구 4개 분야
-- **형식**: Markdown (.md 파일)
+```powershell
+python scripts/publish_edition.py --edition game --date 2026-05-14
+```
 
-## 🔄 작업 흐름
+## 경로 관련 원칙
 
-1. **뉴스 수집 및 템플릿 생성** → `data/sources.json`에 뉴스 기록 후 `create_issue.py`로 초안 파일 생성
-2. **1차 작성 (Codex)** → `docs/prompts.md`의 템플릿을 사용하여 Codex로 기초 원고 작성
-3. **1차 검수 및 수정 (Claude Code)** → `docs/prompts.md`의 윤문 템플릿으로 DJ 톤 앤 매너 반영
-4. **정확도 체크 (Perplexity)** → `docs/prompts.md`의 팩트체크 템플릿을 활용해 실시간 교차 검증
-5. **피드백 루프** → 4번(Perplexity) 검증 결과 내용이 부정확하다면, 피드백을 바탕으로 3번(Claude Code)으로 돌아가 재작성
-6. **발행** → 최종 검수 완료 후 `publish_edition.py` 스크립트로 `published/` 폴더로 이동
+- 스크립트는 프로젝트 루트를 기준으로 상대경로를 사용합니다.
+- 다른 PC에서는 저장소만 그대로 클론하면 됩니다.
+- 개인 PC 경로, OneDrive 경로, 사용자명 같은 절대경로를 코드에 넣지 않는 것을 권장합니다.
 
-## 📝 시작하기
+## Git 사용 기본
 
-1. `data/sources.json` 파일에 이번 주 다룰 뉴스 정보 저장
-2. 터미널을 열고 스크립트 실행하여 초안 생성:
-   ```bash
-   python scripts/create_issue.py --edition game --date 2026-05-14
-   ```
-3. `docs/prompts.md`를 참고하여 Codex, Claude, Perplexity를 활용해 `초안 작성 → 윤문 → 팩트체크 및 수정` 루프 진행
-4. 검증된 내용을 `data/factcheck.json`에 기록
-5. 글 완성 후 발행 스크립트 실행:
-   ```bash
-   python scripts/publish_edition.py --edition game --date 2026-05-14
-   ```
+다른 PC에서 작업한 뒤 변경사항을 다시 올릴 때:
 
----
+```powershell
+git add .
+git commit -m "Update newsletter workflow"
+git push
+```
 
-**관리자**: 성찬 (aseongchan23@gmail.com)
+현재 PC에서 최신 내용을 받을 때:
+
+```powershell
+git pull
+```
